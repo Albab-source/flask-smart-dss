@@ -1,4 +1,5 @@
 #samrt_logic.py
+import csv
 
 def hitung_prioritas_smart(alternatif_data, kriteria_bobot, kriteria_type):
     """
@@ -61,7 +62,36 @@ def hitung_prioritas_smart(alternatif_data, kriteria_bobot, kriteria_type):
 
     return prioritas_terurut
 
-#-----Data Contoh untuk Pengujian -----
+def baca_csv_pasien_header(file_path):
+    """
+    Membaca hanya baris header dari file CSV.
+     
+     Args:
+        file_path (str): Path lengkap ke file CSV.
+    
+    Returns:
+        list: Daftar string yang berisi nama-nama kolom dari header CSV.
+     """
+    common_encodings = ['utf-8', 'utf-8-sig', 'utf-16', 'latin-1', 'cp1252'] # Tambahkan encoding yang ingin dicoba
+
+    for encoding in common_encodings:
+        try:
+            with open(file_path, mode='r', newline='', encoding=encoding) as csvfile:
+                reader = csv.reader(csvfile)
+                header = next(reader) # Baris ini membaca baris pertama sebagai header
+                print(f"File berhasil dibaca dengan encoding: {encoding}") # Pesan debug
+                return header
+        except UnicodeDecodeError:
+            print(f"Gagal membaca dengan encoding {encoding}, mencoba yang lain...")
+            continue # Coba encoding berikutnya
+        except Exception as e:
+            # Tangani error lain yang mungkin terjadi saat membuka/membaca file
+            raise Exception(f"Gagal membaca header CSV dari {file_path} dengan encoding {encoding}: {e}")
+
+    # Jika semua encoding gagal
+    raise Exception(f"Tidak dapat membaca file CSV '{file_path}'. Coba simpan ulang file dengan encoding UTF-8.")
+
+# ------------- Data Contoh untuk Pengujian -------------
 #Definisiakan bobot krieria dan tipenya
 bobot_kriteria = {
     "GCS": 0.30,
